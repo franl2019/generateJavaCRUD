@@ -1,0 +1,23 @@
+package <%= config.packageName %>.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+
+@Mapper
+public interface <%= templateData.camelCaseTableName %>Mapper {
+
+    List<<%= templateData.camelCaseTableName %>> findAll();
+
+    <%= templateData.camelCaseTableName %> findById(Integer id);
+
+    void save(<%= templateData.camelCaseTableName %> <%= templateData.camelCaseTableName %>);
+
+    void updateById(<%= templateData.camelCaseTableName %> <%= templateData.camelCaseTableName %>);
+
+    void removeById(Integer id);
+
+    void l1ReviewById(Integer id);
+
+    void l2ReviewById(Integer id);
+}

@@ -1,0 +1,60 @@
+package <%= config.packageName %>.controller;
+
+import <%= config.packageName %>.module.<%= templateData.camelCaseTableName %>.dto.*;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+
+@RestController
+@RequestMapping("/api/<%= templateData.camelCaseTableName %>")
+public class <%= templateData.pascalCaseTableName %>Controller {
+
+    private final <%= templateData.pascalCaseTableName %>ServiceImpl <%= templateData.camelCaseTableName %>ServiceImpl;
+
+    public <%= templateData.pascalCaseTableName %>Controller(<%= templateData.pascalCaseTableName %>ServiceImpl <%= templateData.camelCaseTableName %>ServiceImpl) {
+        this.<%= templateData.camelCaseTableName %>ServiceImpl = <%= templateData.camelCaseTableName %>ServiceImpl;
+    }
+
+    //创建
+    @PostMapping("/create")
+    public <%= templateData.pascalCaseTableName %> create(@Validated() @RequestBody <%= templateData.pascalCaseTableName %>CreateDto createDto) {
+        return <%= templateData.camelCaseTableName %>ServiceImpl.create(createDto);
+    }
+
+    //更新
+    @PostMapping("/update")
+    public <%= templateData.pascalCaseTableName %> update(@Validated() @RequestBody <%= templateData.pascalCaseTableName %>UpdateDto updateDto) {
+        return <%= templateData.camelCaseTableName %>ServiceImpl.update(updateDto);
+    }
+
+    //删除
+    @PostMapping("/remove")
+    public void removeById(@Validated() @RequestBody <%= templateData.pascalCaseTableName %>DeleteDto <%= templateData.camelCaseTableName %>DeleteDto) {
+        <%= templateData.camelCaseTableName %>ServiceImpl.removeById(<%= templateData.camelCaseTableName %>DeleteDto.get<%= templateData.pascalCaseTableName %>Id());
+    }
+
+    @PostMapping("/l1Review")
+    public void l1Review(@Validated() @RequestBody <%= templateData.pascalCaseTableName %>L1ReviewDto <%= templateData.camelCaseTableName %>L1ReviewDto) {
+        <%= templateData.camelCaseTableName %>ServiceImpl.l1ReviewById(<%= templateData.camelCaseTableName %>L1ReviewDto.get<%= templateData.pascalCaseTableName %>Id());
+    }
+
+    @PostMapping("/l2Review")
+    public void l2Review(@Validated() @RequestBody <%= templateData.pascalCaseTableName %>L2ReviewDto <%= templateData.camelCaseTableName %>L2ReviewDto) {
+        <%= templateData.camelCaseTableName %>ServiceImpl.l2ReviewById(<%= templateData.camelCaseTableName %>L2ReviewDto.get<%= templateData.pascalCaseTableName %>Id());
+    }
+
+    @PostMapping("/l1UnReview")
+    public void l1UnReview(@Validated() @RequestBody <%= templateData.pascalCaseTableName %>L1ReviewDto <%= templateData.camelCaseTableName %>L1UnReviewDto) {
+        <%= templateData.camelCaseTableName %>ServiceImpl.unL1ReviewById(<%= templateData.camelCaseTableName %>L1UnReviewDto.get<%= templateData.pascalCaseTableName %>Id());
+    }
+
+    @PostMapping("/l2UnReview")
+    public void l2UnReview(@Validated() @RequestBody <%= templateData.pascalCaseTableName %>L2ReviewDto <%= templateData.camelCaseTableName %>L2UnReviewDto) {
+        <%= templateData.camelCaseTableName %>ServiceImpl.unL2ReviewById(<%= templateData.camelCaseTableName %>L2UnReviewDto.get<%= templateData.pascalCaseTableName %>Id());
+    }
+
+
+}

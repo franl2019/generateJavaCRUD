@@ -1,0 +1,30 @@
+package <%= config.packageName %>.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+
+@Mapper
+public interface <%= templateData.camelCaseTableName %>Mapper {
+
+    List<<%= templateData.camelCaseTableName %>> findAll();
+
+    <%= templateData.camelCaseTableName %> findById(
+
+<% templateData.primaryKeyColumns.forEach(function(column,index){ %>
+        <%= column.javaType %> <%= column.camelCaseColumnName %><% if(index < templateData.primaryKeyColumns.length - 1){ %>,<% } %>
+
+
+<% }) %>
+    );
+
+
+<% templateData.primaryKeyColumns.forEach(function(column,index){ %>
+    <%= templateData.camelCaseTableName %> findBy<%= column.pascalCaseColumnName %>(<%= column.javaType %> <%= column.camelCaseColumnName %>);
+
+
+<% }) %>
+    void save(<%= templateData.camelCaseTableName %> <%= templateData.camelCaseTableName %>);
+
+    void removeById(Integer id);
+}

@@ -1,0 +1,21 @@
+package <%= config.packageName %>.<%= templateData.camelCaseTableName %>;
+
+import lombok.Data;
+import java.time.LocalDateTime;
+
+/**
+ * <%= templateData.tableComment %>
+
+ */
+@Data
+public class <%= templateData.pascalCaseTableName %>{
+    <% templateData.columns.forEach(function(column){ %>
+
+    /**
+     * <%= column.comment %>
+
+     */
+    private <%= column.javaType %> <%= column.camelCaseColumnName %>;
+    <% }) %>
+
+}

@@ -1,0 +1,66 @@
+package <%= config.packageName %>.service;
+
+import <%= config.packageName %>.<%= templateData.camelCaseTableName %>.module.<%= templateData.camelCaseTableName %>.dto.<%= templateData.pascalCaseTableName %>CreateDto;
+import <%= config.packageName %>.<%= templateData.camelCaseTableName %>.module.<%= templateData.camelCaseTableName %>.dto.<%= templateData.pascalCaseTableName %>L1ReviewDto;
+import <%= config.packageName %>.<%= templateData.camelCaseTableName %>.module.<%= templateData.camelCaseTableName %>.dto.<%= templateData.pascalCaseTableName %>L2ReviewDto;
+import <%= config.packageName %>.<%= templateData.camelCaseTableName %>.module.<%= templateData.camelCaseTableName %>.dto.<%= templateData.pascalCaseTableName %>UpdateDto;
+import <%= config.packageName %>.<%= templateData.camelCaseTableName %>.utils.UtilGetDate;
+import <%= config.packageName %>.<%= templateData.camelCaseTableName %>.utils.UtilGetUserInfo;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class <%= templateData.pascalCaseTableName %>ServiceImpl {
+
+    private final <%= templateData.pascalCaseTableName %>Mapper <%= templateData.camelCaseTableName %>Mapper;
+    private final ModelMapper modelMapper;
+
+    public <%= templateData.pascalCaseTableName %>ServiceImpl(<%= templateData.pascalCaseTableName %>Mapper <%= templateData.camelCaseTableName %>Mapper, ModelMapper modelMapper) {
+        this.<%= templateData.camelCaseTableName %>Mapper = <%= templateData.camelCaseTableName %>Mapper;
+        this.modelMapper = modelMapper;
+    }
+
+    //创建
+    @Transactional(rollbackFor = Exception.class)
+    public <%= templateData.pascalCaseTableName %> create(<%= templateData.pascalCaseTableName %>CreateDto createDto) {
+        <%= templateData.pascalCaseTableName %> <%= templateData.camelCaseTableName %> = modelMapper.map(createDto, <%= templateData.pascalCaseTableName %>.class);
+        <%= templateData.camelCaseTableName %>.setCreator(UtilGetUserInfo.getUserName());
+        <%= templateData.camelCaseTableName %>.setCreatorId(UtilGetUserInfo.getUserId());
+        <%= templateData.camelCaseTableName %>.setCreatedTime(UtilGetDate.getLocalDateTime());
+        <%= templateData.camelCaseTableName %>Mapper.save(<%= templateData.camelCaseTableName %>);
+        return <%= templateData.camelCaseTableName %>;
+    }
+
+    //删除
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(
+
+<% templateData.primaryKeyColumns.forEach(function(column){ %>
+            <%= column.javaType %> <%= column.camelCaseColumnName %>,
+
+<% }) %>
+    ) {
+        <%= templateData.camelCaseTableName %>Mapper.delete(
+
+<% templateData.primaryKeyColumns.forEach(function(column){ %>
+            <%= column.camelCaseColumnName %>,
+
+<% }) %>
+        );
+    }
+
+
+<% templateData.primaryKeyColumns.forEach(function(column,index){ %>
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteBy<%= column.pascalCaseColumnName %>(<%= column.javaType %> <%= column.camelCaseColumnName %>) {
+        <%= templateData.camelCaseTableName %>Mapper.deleteBy<%= column.pascalCaseColumnName %>(<%= column.camelCaseColumnName %>);
+    }
+<% if(index < templateData.primaryKeyColumns.length - 1){ %>
+
+
+
+<% } %>
+<% }) %>
+
+}

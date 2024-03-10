@@ -1,0 +1,37 @@
+package <%= config.packageName %>.dto.<%= templateData.camelCaseTableName %>;
+
+import java.time.LocalDateTime;
+import javax.validation.constraints.Null;
+import javax.validation.constraints.NotNull;
+import lombok.Data;
+
+/**
+ * <%= templateData.tableComment %>一级审核DTO
+ */
+@Data
+public class <%= templateData.pascalCaseTableName %>L1ReviewDto{
+ <% templateData.columns.forEach(function(column){ %>
+  <% if(column.key === "PRI"){ %>
+
+      /**
+       * <%= column.comment %>
+
+       */
+      @NotNull(message = "不能为空")
+      private <%= column.javaType %> <%= column.camelCaseColumnName %>;
+    <% } %>
+    <% if(column.field === "l1_reviewer" ||
+      column.field === "l1_reviewer_id" ||
+      column.field === "l1_review_time"
+      ){ %>
+
+      /**
+       * <%= column.comment %>
+
+       */
+      @Null(message = "必须为空")
+      private <%= column.javaType %> <%= column.camelCaseColumnName %>;
+    <% } %>
+  <% }) %>
+
+}

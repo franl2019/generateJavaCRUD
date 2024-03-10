@@ -1,0 +1,39 @@
+package <%= config.packageName %>.dto.<%= templateData.camelCaseTableName %>;
+
+import java.time.LocalDateTime;
+import javax.validation.constraints.Null;
+import javax.validation.constraints.NotNull;
+import lombok.Data;
+
+/**
+ * <%= templateData.tableComment %>创建DTO
+
+ */
+@Data
+public class <%= templateData.pascalCaseTableName %>CreateDto{
+<% templateData.insertColumns.forEach(function(column){ %>
+<% if(column.field === "creator"
+  || column.field === "creator_id"
+  || column.field === "created_time"
+){ %>
+
+
+    /**
+     * <%= column.comment %>
+
+     */
+    @Null(message = "必须为空")
+    private <%= column.javaType %> <%= column.camelCaseColumnName %>;
+<% }else{ %>
+
+
+    /**
+     * <%= column.comment %>
+
+     */
+    @NotNull(message = "不能为空")
+    private <%= column.javaType %> <%= column.camelCaseColumnName %>;
+<% } %>
+<% }) %>
+
+}

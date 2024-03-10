@@ -1,0 +1,146 @@
+<mapper xmlns="http://mybatis.org/schema/mybatis-mapper" namespace="<%= config.packageName %>.models.<%= templateData.camelCaseTableName+`.`+templateData.pascalCaseTableName %>Mapper">
+    <select id="findAll" resultType="<%= config.packageName %>.models.<%= templateData.camelCaseTableName+`.`+templateData.pascalCaseTableName %>">
+        select
+
+<% templateData.columns.forEach(function(column){ %>
+            <%= templateData.tableName+`.`+column.field %>
+<% if(column != templateData.columns[templateData.columns.length-1]){ %>,
+
+<% } %>
+<% }) %>
+
+        from
+            <%= templateData.tableName %>
+
+    </select>
+
+    <select id="findById" resultType="<%= config.packageName %>.models.<%= templateData.camelCaseTableName+`.`+templateData.pascalCaseTableName %>" parameterType="<%= config.packageName %>.models.<%= templateData.camelCaseTableName+`.`+templateData.pascalCaseTableName %>">
+        select
+
+<% templateData.columns.forEach(function(column){ %>
+            <%= templateData.tableName+`.`+column.field %>
+<% if(column != templateData.columns[templateData.columns.length-1]){ %>,
+
+<% } %>
+<% }) %>
+
+        from
+            <%= templateData.tableName %>
+
+        where
+<% templateData.columns.forEach(function(column){ %>
+<% if(column.key === "PRI"){ %>
+
+             <%= templateData.tableName+`.`+column.field %> = #{<%= column.camelCaseColumnName %>}
+<% } %>
+<% }) %>
+
+    </select>
+
+    <insert id="save" parameterType="<%= config.packageName %>.models.<%= templateData.camelCaseTableName+`.`+templateData.pascalCaseTableName %>"
+<% templateData.columns.forEach(function(column){ %>
+<% if(column.key === "PRI"){ %>
+ useGeneratedKeys="true" keyProperty="<%= column.camelCaseColumnName %>">
+<% } %>
+<% }) %>
+
+        insert into
+        <%= templateData.tableName %>
+
+        (
+<% templateData.insertColumns.forEach(function(column){ %>
+
+            <%= templateData.tableName+`.`+column.field %>
+<% if(column != templateData.insertColumns[templateData.insertColumns.length-1]){ %>,
+<% } %>
+<% }) %>
+
+        )
+        values
+        (
+<% templateData.insertColumns.forEach(function(column){ %>
+
+            #{<%= column.camelCaseColumnName %>}
+<% if(column != templateData.insertColumns[templateData.insertColumns.length-1]){ %>,
+<% } %>
+<% }) %>
+
+        )
+    </insert>
+
+    <update id="updateById" parameterType="<%= config.packageName %>.models.<%= templateData.camelCaseTableName+`.`+templateData.pascalCaseTableName %>">
+        update <%= templateData.tableName %>
+
+        set
+<% templateData.updateColumns.forEach(function(column){ %>
+
+            <%= templateData.tableName+`.`+column.field %> = #{<%= column.camelCaseColumnName %>}
+<% if(column != templateData.updateColumns[templateData.updateColumns.length-1]){ %>,
+<% } %>
+<% }) %>
+
+        where
+<% templateData.columns.forEach(function(column){ %>
+<% if(column.key === "PRI"){ %>
+
+            <%= templateData.tableName+`.`+column.field %> = #{<%= column.camelCaseColumnName %>}
+<% } %>
+<% }) %>
+
+    </update>
+
+    <update id="removeById" parameterType="<%= config.packageName %>.models.<%= templateData.camelCaseTableName+`.`+templateData.pascalCaseTableName %>">
+        update <%= templateData.tableName %>
+
+        set
+            delete_review = #{deleteReview},
+            deleter       = #{deleter},
+            deleter_id    = #{deleterId},
+            deleted_time  = #{deletedTime}
+        where
+<% templateData.columns.forEach(function(column){ %>
+<% if(column.key === "PRI"){ %>
+
+            <%= templateData.tableName+`.`+column.field %> = #{<%= column.camelCaseColumnName %>}
+<% } %>
+<% }) %>
+
+    </update>
+
+    <update id="l1ReviewById" parameterType="<%= config.packageName %>.models.<%= templateData.camelCaseTableName+`.`+templateData.pascalCaseTableName %>">
+        update <%= templateData.tableName %>
+
+        set
+            l1_review = #{l1Review},
+            l1_reviewer_id = #{l1ReviewerId},
+            l1_reviewer    = #{l1Reviewer},
+            l1_review_time = #{l1ReviewTime}
+        where
+<% templateData.columns.forEach(function(column){ %>
+<% if(column.key === "PRI"){ %>
+
+            <%= templateData.tableName+`.`+column.field %> = #{<%= column.camelCaseColumnName %>}
+<% } %>
+<% }) %>
+
+    </update>
+
+    <update id="l2ReviewById" parameterType="<%= config.packageName %>.models.<%= templateData.camelCaseTableName+`.`+templateData.pascalCaseTableName %>">
+        update <%= templateData.tableName %>
+
+        set
+            l2_review = #{l2Review},
+            l2_reviewer_id = #{l2ReviewerId},
+            l2_reviewer    = #{l2Reviewer},
+            l2_review_time = #{l2ReviewTime}
+        where
+<% templateData.columns.forEach(function(column){ %>
+<% if(column.key === "PRI"){ %>
+
+            <%= templateData.tableName+`.`+column.field %> = #{<%= column.camelCaseColumnName %>}
+<% } %>
+<% }) %>
+
+    </update>
+
+</mapper>

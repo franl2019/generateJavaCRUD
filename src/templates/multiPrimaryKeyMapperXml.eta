@@ -1,0 +1,122 @@
+<mapper xmlns="http://mybatis.org/schema/mybatis-mapper" namespace="<%= config.packageName %>.models.<%= templateData.camelCaseTableName+`.`+templateData.pascalCaseTableName %>Mapper">
+    <select id="findAll" resultType="<%= config.packageName %>.models.<%= templateData.camelCaseTableName+`.`+templateData.pascalCaseTableName %>">
+        select
+
+<% templateData.columns.forEach(function(column){ %>
+            <%= templateData.tableName+`.`+column.field %>
+<% if(column != templateData.columns[templateData.columns.length-1]){ %>,
+
+<% } %>
+<% }) %>
+
+        from
+            <%= templateData.tableName %>
+
+    </select>
+
+    <select id="findById" resultType="<%= config.packageName %>.models.<%= templateData.camelCaseTableName+`.`+templateData.pascalCaseTableName %>" parameterType="<%= config.packageName %>.models.<%= templateData.camelCaseTableName+`.`+templateData.pascalCaseTableName %>">
+        select
+
+<% templateData.columns.forEach(function(column){ %>
+            <%= templateData.tableName+`.`+column.field %>
+<% if(column != templateData.columns[templateData.columns.length-1]){ %>,
+
+<% } %>
+<% }) %>
+
+        from
+            <%= templateData.tableName %>
+
+        where
+<% templateData.columns.forEach(function(column){ %>
+<% if(column.key === "PRI"){ %>
+
+             <%= templateData.tableName+`.`+column.field %> = #{<%= column.camelCaseColumnName %>}
+<% } %>
+<% }) %>
+
+    </select>
+
+
+<% templateData.primaryKeyColumns.forEach(function(column,index){ %>
+    <select id="findBy<%= column.pascalCaseColumnName %>" resultType="<%= config.packageName %>.models.<%= templateData.camelCaseTableName+`.`+templateData.pascalCaseTableName %>" parameterType="<%= config.packageName %>.models.<%= templateData.camelCaseTableName+`.`+templateData.pascalCaseTableName %>">
+        select
+
+<% templateData.columns.forEach(function(column){ %>
+            <%= templateData.tableName+`.`+column.field %>
+<% if(column != templateData.columns[templateData.columns.length-1]){ %>,
+<% } %>
+<% }) %>
+
+        from
+            <%= templateData.tableName %>
+
+        where
+            <%= templateData.tableName+`.`+column.field %> = #{<%= column.camelCaseColumnName %>}
+    </select>
+<% if(index < templateData.primaryKeyColumns.length-1){ %>
+
+
+
+<% } %>
+<% }) %>
+
+
+    <insert id="save" parameterType="<%= config.packageName %>.models.<%= templateData.camelCaseTableName+`.`+templateData.pascalCaseTableName %>">s
+        insert into
+        <%= templateData.tableName %>
+
+        (
+<% templateData.insertColumns.forEach(function(column){ %>
+
+            <%= templateData.tableName+`.`+column.field %>
+<% if(column != templateData.insertColumns[templateData.insertColumns.length-1]){ %>,
+<% } %>
+<% }) %>
+
+        )
+        values
+        (
+<% templateData.insertColumns.forEach(function(column){ %>
+
+            #{<%= column.camelCaseColumnName %>}
+<% if(column != templateData.insertColumns[templateData.insertColumns.length-1]){ %>,
+<% } %>
+<% }) %>
+
+        )
+    </insert>
+
+    <delete id="delete" parameterType="<%= config.packageName %>.models.<%= templateData.camelCaseTableName+`.`+templateData.pascalCaseTableName %>">
+        delete from
+            <%= templateData.tableName %>
+
+        where
+<% templateData.columns.forEach(function(column){ %>
+<% if(column.key === "PRI"){ %>
+
+            <%= templateData.tableName+`.`+column.field %> = #{<%= column.camelCaseColumnName %>}
+<% } %>
+<% }) %>
+
+    </delete>
+
+
+<% templateData.primaryKeyColumns.forEach(function(column,index){ %>
+    <delete id="deleteBy<%= column.pascalCaseColumnName %>" parameterType="<%= config.packageName %>.models.<%= templateData.camelCaseTableName+`.`+templateData.pascalCaseTableName %>">
+        delete from
+            <%= templateData.tableName %>
+
+        where
+            <%= templateData.tableName+`.`+column.field %> = #{<%= column.camelCaseColumnName %>}
+    </delete>
+<% if(index < templateData.primaryKeyColumns.length-1){ %>
+
+
+
+<% } %>
+<% }) %>
+
+
+
+</mapper>

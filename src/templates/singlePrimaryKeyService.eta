@@ -1,0 +1,151 @@
+package <%= config.packageName %>.service;
+
+import <%= config.packageName %>.<%= templateData.camelCaseTableName %>.module.<%= templateData.camelCaseTableName %>.dto.<%= templateData.pascalCaseTableName %>CreateDto;
+import <%= config.packageName %>.<%= templateData.camelCaseTableName %>.module.<%= templateData.camelCaseTableName %>.dto.<%= templateData.pascalCaseTableName %>L1ReviewDto;
+import <%= config.packageName %>.<%= templateData.camelCaseTableName %>.module.<%= templateData.camelCaseTableName %>.dto.<%= templateData.pascalCaseTableName %>L2ReviewDto;
+import <%= config.packageName %>.<%= templateData.camelCaseTableName %>.module.<%= templateData.camelCaseTableName %>.dto.<%= templateData.pascalCaseTableName %>UpdateDto;
+import <%= config.packageName %>.<%= templateData.camelCaseTableName %>.utils.UtilGetDate;
+import <%= config.packageName %>.<%= templateData.camelCaseTableName %>.utils.UtilGetUserInfo;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class <%= templateData.pascalCaseTableName %>ServiceImpl {
+
+    private final <%= templateData.pascalCaseTableName %>Mapper <%= templateData.camelCaseTableName %>Mapper;
+    private final ModelMapper modelMapper;
+
+    public <%= templateData.pascalCaseTableName %>ServiceImpl(<%= templateData.pascalCaseTableName %>Mapper <%= templateData.camelCaseTableName %>Mapper, ModelMapper modelMapper) {
+        this.<%= templateData.camelCaseTableName %>Mapper = <%= templateData.camelCaseTableName %>Mapper;
+        this.modelMapper = modelMapper;
+    }
+
+    //创建
+    @Transactional(rollbackFor = Exception.class)
+    public <%= templateData.pascalCaseTableName %> create(<%= templateData.pascalCaseTableName %>CreateDto createDto) {
+        <%= templateData.pascalCaseTableName %> <%= templateData.camelCaseTableName %> = modelMapper.map(createDto, <%= templateData.pascalCaseTableName %>.class);
+        <%= templateData.camelCaseTableName %>.setCreator(UtilGetUserInfo.getUserName());
+        <%= templateData.camelCaseTableName %>.setCreatorId(UtilGetUserInfo.getUserId());
+        <%= templateData.camelCaseTableName %>.setCreatedTime(UtilGetDate.getLocalDateTime());
+        <%= templateData.camelCaseTableName %>Mapper.save(<%= templateData.camelCaseTableName %>);
+        return <%= templateData.camelCaseTableName %>;
+    }
+
+    //更新
+    @Transactional(rollbackFor = Exception.class)
+    public <%= templateData.pascalCaseTableName %> update(<%= templateData.pascalCaseTableName %>UpdateDto updateDto) {
+        <%= templateData.pascalCaseTableName %> <%= templateData.camelCaseTableName %> = <%= templateData.camelCaseTableName %>Mapper.findById(updateDto.get<%= templateData.pascalCaseTableName %>Id());
+        if (<%= templateData.camelCaseTableName %> == null) {
+            throw new RuntimeException("查询<%= templateData.tableComment %>失败");
+        }
+        if (<%= templateData.camelCaseTableName %>.getL1Review() || <%= templateData.camelCaseTableName %>.getL2Review()) {
+            throw new RuntimeException("审核状态异常");
+        }
+        <%= templateData.pascalCaseTableName %> update<%= templateData.pascalCaseTableName %> = modelMapper.map(updateDto, <%= templateData.pascalCaseTableName %>.class);
+        update<%= templateData.pascalCaseTableName %>.setUpdater(UtilGetUserInfo.getUserName());
+        update<%= templateData.pascalCaseTableName %>.setUpdaterId(UtilGetUserInfo.getUserId());
+        update<%= templateData.pascalCaseTableName %>.setUpdatedTime(UtilGetDate.getLocalDateTime());
+
+        <%= templateData.camelCaseTableName %>Mapper.updateById(update<%= templateData.pascalCaseTableName %>);
+        return update<%= templateData.pascalCaseTableName %>;
+    }
+
+    //删除
+    @Transactional(rollbackFor = Exception.class)
+    public void removeById(Integer <%= templateData.camelCaseTableName %>Id) {
+        <%= templateData.pascalCaseTableName %> <%= templateData.camelCaseTableName %> = <%= templateData.camelCaseTableName %>Mapper.findById(<%= templateData.camelCaseTableName %>Id);
+        if (<%= templateData.camelCaseTableName %> == null) {
+            throw new RuntimeException("查询<%= templateData.tableComment %>失败");
+        }
+        if (<%= templateData.camelCaseTableName %>.getL1Review() || <%= templateData.camelCaseTableName %>.getL2Review()) {
+            throw new RuntimeException("审核状态异常");
+        }
+        <%= templateData.camelCaseTableName %>Mapper.removeById(<%= templateData.camelCaseTableName %>Id);
+    }
+
+    //一级审核
+    @Transactional(rollbackFor = Exception.class)
+    public void l1ReviewById(Integer <%= templateData.camelCaseTableName %>Id) {
+        <%= templateData.pascalCaseTableName %>L1ReviewDto l1ReviewDto = new <%= templateData.pascalCaseTableName %>L1ReviewDto();
+        l1ReviewDto.set<%= templateData.pascalCaseTableName %>Id(<%= templateData.camelCaseTableName %>Id);
+        <%= templateData.pascalCaseTableName %> <%= templateData.camelCaseTableName %> = <%= templateData.camelCaseTableName %>Mapper.findById(l1ReviewDto.get<%= templateData.pascalCaseTableName %>Id());
+        if (<%= templateData.camelCaseTableName %> == null) {
+            throw new RuntimeException("查询<%= templateData.tableComment %>失败");
+        }
+        if (!<%= templateData.camelCaseTableName %>.getL1Review() && !<%= templateData.camelCaseTableName %>.getL2Review()) {
+            <%= templateData.pascalCaseTableName %> l1Review<%= templateData.pascalCaseTableName %> = modelMapper.map(l1ReviewDto, <%= templateData.pascalCaseTableName %>.class);
+            l1Review<%= templateData.pascalCaseTableName %>.setL1Review(true);
+            l1Review<%= templateData.pascalCaseTableName %>.setL1Reviewer(UtilGetUserInfo.getUserName());
+            l1Review<%= templateData.pascalCaseTableName %>.setL1ReviewerId(UtilGetUserInfo.getUserId());
+            l1Review<%= templateData.pascalCaseTableName %>.setL1ReviewTime(UtilGetDate.getLocalDateTime());
+            <%= templateData.camelCaseTableName %>Mapper.l1ReviewById(l1Review<%= templateData.pascalCaseTableName %>);
+        } else {
+            throw new RuntimeException("审核状态异常");
+        }
+    }
+
+    //撤销一级审核
+    @Transactional(rollbackFor = Exception.class)
+    public void unL1ReviewById(Integer <%= templateData.camelCaseTableName %>Id) {
+        <%= templateData.pascalCaseTableName %>L1ReviewDto l1ReviewDto = new <%= templateData.pascalCaseTableName %>L1ReviewDto();
+        l1ReviewDto.set<%= templateData.pascalCaseTableName %>Id(<%= templateData.camelCaseTableName %>Id);
+        <%= templateData.pascalCaseTableName %> <%= templateData.camelCaseTableName %> = <%= templateData.camelCaseTableName %>Mapper.findById(l1ReviewDto.get<%= templateData.pascalCaseTableName %>Id());
+        if (<%= templateData.camelCaseTableName %> == null) {
+            throw new RuntimeException("查询<%= templateData.tableComment %>失败");
+        }
+        if (<%= templateData.camelCaseTableName %>.getL1Review() && !<%= templateData.camelCaseTableName %>.getL2Review()) {
+            <%= templateData.pascalCaseTableName %> l1Review<%= templateData.pascalCaseTableName %> = modelMapper.map(l1ReviewDto, <%= templateData.pascalCaseTableName %>.class);
+            l1Review<%= templateData.pascalCaseTableName %>.setL1Review(false);
+            l1Review<%= templateData.pascalCaseTableName %>.setL1Reviewer("");
+            l1Review<%= templateData.pascalCaseTableName %>.setL1ReviewerId(null);
+            l1Review<%= templateData.pascalCaseTableName %>.setL1ReviewTime(null);
+            <%= templateData.camelCaseTableName %>Mapper.l1ReviewById(l1Review<%= templateData.pascalCaseTableName %>);
+        } else {
+            throw new RuntimeException("审核状态异常");
+        }
+    }
+
+    //二级审核
+    @Transactional(rollbackFor = Exception.class)
+    public void l2ReviewById(Integer <%= templateData.camelCaseTableName %>Id) {
+        <%= templateData.pascalCaseTableName %>L2ReviewDto l2ReviewDto = new <%= templateData.pascalCaseTableName %>L2ReviewDto();
+        l2ReviewDto.set<%= templateData.pascalCaseTableName %>Id(<%= templateData.camelCaseTableName %>Id);
+        <%= templateData.pascalCaseTableName %> <%= templateData.camelCaseTableName %> = <%= templateData.camelCaseTableName %>Mapper.findById(l2ReviewDto.get<%= templateData.pascalCaseTableName %>Id());
+        if (<%= templateData.camelCaseTableName %> == null) {
+            throw new RuntimeException("查询<%= templateData.tableComment %>失败");
+        }
+        if (<%= templateData.camelCaseTableName %>.getL1Review() && !<%= templateData.camelCaseTableName %>.getL2Review()) {
+            <%= templateData.pascalCaseTableName %> l2Review<%= templateData.pascalCaseTableName %> = modelMapper.map(l2ReviewDto, <%= templateData.pascalCaseTableName %>.class);
+            l2Review<%= templateData.pascalCaseTableName %>.setL2Review(true);
+            l2Review<%= templateData.pascalCaseTableName %>.setL2Reviewer(UtilGetUserInfo.getUserName());
+            l2Review<%= templateData.pascalCaseTableName %>.setL2ReviewerId(UtilGetUserInfo.getUserId());
+            l2Review<%= templateData.pascalCaseTableName %>.setL2ReviewTime(null);
+            <%= templateData.camelCaseTableName %>Mapper.l2ReviewById(l2Review<%= templateData.pascalCaseTableName %>);
+        } else {
+            throw new RuntimeException("审核状态异常");
+        }
+
+    }
+
+    //撤销二级审核
+    @Transactional(rollbackFor = Exception.class)
+    public void unL2ReviewById(Integer <%= templateData.camelCaseTableName %>Id) {
+        <%= templateData.pascalCaseTableName %>L2ReviewDto l2ReviewDto = new <%= templateData.pascalCaseTableName %>L2ReviewDto();
+        l2ReviewDto.set<%= templateData.pascalCaseTableName %>Id(<%= templateData.camelCaseTableName %>Id);
+        <%= templateData.pascalCaseTableName %> <%= templateData.camelCaseTableName %> = <%= templateData.camelCaseTableName %>Mapper.findById(l2ReviewDto.get<%= templateData.pascalCaseTableName %>Id());
+        if (<%= templateData.camelCaseTableName %> == null) {
+            throw new RuntimeException("查询<%= templateData.tableComment %>失败");
+        }
+        if (<%= templateData.camelCaseTableName %>.getL1Review() && <%= templateData.camelCaseTableName %>.getL2Review()) {
+            <%= templateData.pascalCaseTableName %> l2Review<%= templateData.pascalCaseTableName %> = modelMapper.map(l2ReviewDto, <%= templateData.pascalCaseTableName %>.class);
+            l2Review<%= templateData.pascalCaseTableName %>.setL2Review(false);
+            l2Review<%= templateData.pascalCaseTableName %>.setL2Reviewer("");
+            l2Review<%= templateData.pascalCaseTableName %>.setL2ReviewerId(null);
+            l2Review<%= templateData.pascalCaseTableName %>.setL2ReviewTime(null);
+            <%= templateData.camelCaseTableName %>Mapper.l2ReviewById(l2Review<%= templateData.pascalCaseTableName %>);
+        } else {
+            throw new RuntimeException("审核状态异常");
+        }
+    }
+}
